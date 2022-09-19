@@ -173,7 +173,7 @@ class Notification(object):
             DeprecationWarning
 
         """
-        import warnings
+        import warnings  # TODO: Cleanup
         warnings.warn("build method is deprecated, call show directly instead", DeprecationWarning)
         return self
 
@@ -222,7 +222,7 @@ class Notifier:
                 sys.exit()
         else:
             self.listener = Listener(self.app_id)
-            open(pidfile, 'w').write(str(os.getpid()))  # pid file
+            open(pidfile, 'w').write(str(os.getpid()))  # pid file  # TODO: Cleanup
             atexit.register(os.unlink, pidfile)
 
     @property
@@ -333,13 +333,13 @@ class Notifier:
         Returns:
             True, if opened from notification; False if opened directly
         """
-        if len(sys.argv) > 1:
-            arg = sys.argv[1]
-            return format_name(self.app_id) + ':' in arg and len(arg.split(':')) > 0
-        else:
+        if len(sys.argv) <= 1:
             return False
 
-    def register_callback(self, func=None, *, run_in_main_thread=False):
+        arg = sys.argv[1]
+        return format_name(self.app_id) + ':' in arg and len(arg.split(':')) > 0
+
+    def register_callback(self, function=None, *, run_in_main_thread=False):
         """
         A decorator to register a function to be used as a callback
         Args:
@@ -356,19 +356,19 @@ class Notifier:
             The registered function
 
         """
-        def inner(f):
+        def inner(func):
             if run_in_main_thread:
-                f.rimt = run_in_main_thread
-            self.callbacks[f.__name__] = f
-            f.url = self.callback_to_url(f)
-            return f
+                func.rimt = run_in_main_thread
+            self.callbacks[func.__name__] = func
+            func.url = self.callback_to_url(func)
+            return func
 
-        if func is None:
+        if function is None:
             return inner
-        else:
-            return inner(func)
 
-    def callback_to_url(self, func: Callable) -> str:
+        return inner(function)
+
+    def callback_to_url(self, func: Callable) -> str:  # TODO: Fix return type
         """
         Translate the registered callback function `func` to url notation.
 

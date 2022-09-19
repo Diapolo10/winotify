@@ -1,0 +1,157 @@
+[build-system]
+requires = ['poetry-core>=1.0.0',]
+build-backend = 'poetry.core.masonry.api'
+
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = [
+    '.tox/*',
+    'tests/*',
+]
+
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ''  # https://www.flake8rules.com/
+max-complexity = 15  # Info: https://en.wikipedia.org/wiki/Cyclomatic_complexity
+per-file-ignores = """\
+# F401: Ignore "unused" imports
+# F403: Ignore star imports
+# F405: Ignore names from star imports
+__init__.py:F401,F403,F405\
+"""
+
+
+[tool.poetry]
+name = 'winotify'
+version = '1.1.0'
+description = "Show notification toast on Windows 10"
+
+authors = ["Versa Syahputra <versa1220@gmail.com>",]
+maintainers = [
+    "Versa Syahputra <versa1220@gmail.com>",
+    "Lari Liuhamo <lari.liuhamo+pypi@gmail.com>",
+]
+
+include = ['CHANGELOG.md', 'LICENSE', 'logging.conf']
+license = 'MIT'
+readme = 'README.md'
+
+homepage = 'https://pypi.org/project/winotify/'
+repository = 'https://github.com/versa-syahptr/winotify'
+documentation = 'https://github.com/versa-syahptr/winotify/tree/main/docs'
+
+keywords = [
+    'communication',
+    'notifications',
+    'python3',
+    'windows',
+]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Win32 (MS Windows)',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Operating System :: Microsoft :: Windows :: Windows 10',
+    'Operating System :: Microsoft :: Windows :: Windows 11',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Programming Language :: Python :: Implementation :: PyPy',
+    'Topic :: Communications',
+    'Topic :: Utilities',
+    'Typing :: Typed',
+]
+
+
+[tool.poetry.dependencies]
+python = '^3.6'
+
+
+[tool.poetry.dev-dependencies]
+coverage = {version = '^6.2', extras = ['toml',]}
+flake8 = '^4.0.1'
+mypy = '^0.971'
+pylint = '^2.12.0'
+pyproject-flake8 = '^0.0.1a5'
+pytest = '^7.0.1'
+pytest-cov = '^3.0.0'
+tox = '^3.26.0'
+tox-gh-actions = '^2.9.1'
+
+
+[tool.poetry.scripts]
+winotify = 'winotify.__main__:main'
+winotify-nc = 'winotify.__main__:main'
+
+
+[tool.poetry.urls]
+"Source code" = 'https://github.com/versa-syahptr/winotify'
+"Tracker" = 'https://github.com/versa-syahptr/winotify/issues'
+"Changelog" = 'https://github.com/versa-syahptr/winotify/blob/main/CHANGELOG.md'
+
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable = [
+    # https://vald-phoenix.github.io/pylint-errors/
+    'R0903',  # Too few public methods
+]
+
+
+[tool.pytest.ini_options]
+minversion = '7.0'
+addopts = """
+--doctest-modules \
+--cov=./ \
+--cov-append \
+--cov-report html:tests/reports/coverage-html \
+--cov-report xml:tests/reports/coverage.xml \
+--ignore=docs/
+"""
+testpaths = [
+    'tests',
+]
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py36, py37, py38, py39, py310, pypy3
+isolated_build = True
+
+[gh-actions]
+python =
+    3.6: py36
+    3.7: py37
+    3.8: py38
+    3.9: py39
+    3.10: py310
+    pypy-3.8: pypy3
+
+[gh-actions:env]
+PLATFORM =
+    ubuntu-latest: linux
+    macos-latest: macos
+    windows-latest: windows
+
+[testenv]
+passenv = GITHUB_*
+deps =
+    coverage
+    coveralls[toml]
+    pytest
+    pytest-cov
+commands =
+    coverage run -m pytest
+"""

@@ -1,31 +1,24 @@
 from os import path
 import sys
 import winreg
+from os import PathLike
+from pathlib import Path
+from typing import Union
 
 HKEY = winreg.HKEY_CURRENT_USER
 SUBKEY = r"SOFTWARE\Classes\{}"
 SHELLKEY = r"shell\open\command"
 
+PY_EXE = Path(sys.executable)
+PYW_EXE = PY_EXE.parent / "pythonw.exe"
 
-class P:
-    def __init__(self, p, s):
-        self.p, self.s = p, s
-
-    def __repr__(self): return self.s
-    def __str__(self): return self.p
-
-
-# path to python.exe
-PY_EXE = P(path.join(path.dirname(sys.executable), "python.exe"), "PY_EXE")
-# path to pythonw.exe
-PYW_EXE = P(path.join(path.dirname(sys.executable), "pythonw.exe"), "PYW_EXE")
-
+FilePath = Union[str, PathLike]
 
 class InvalidKeyStructure(Exception): pass
 
 
 class Registry:
-    def __init__(self, app_id: str, executable=PY_EXE, script_path: str = '', *, force_override=False):
+    def __init__(self, app_id: str, executable: FilePath=PY_EXE, script_path: FilePath = '', *, force_override: bool=False):
         """
         register app_id to Windows Registry as a protocol,
         eg. the app_id is "My Awesome App" can be called from browser or run.exe by typing "my-awesome-app:[Params]"
@@ -45,6 +38,7 @@ class Registry:
             InvalidKeyStructure: If `force_override` is True but the registry value is not created by winotify or
                                  the key structure is invalid.
         """
+
         self.app_id = app_id
         self.app = format_name(app_id)
         self._key = SUBKEY.format(self.app)
@@ -59,9 +53,11 @@ class Registry:
         key = winreg.OpenKey(self.reg, self._key)
         try:
             winreg.OpenKey(key, SHELLKEY).Close()
-        except WindowsError:
-            raise InvalidKeyStructure(f'The registry from "{self.app}" was not created by winotify or the structure '
-                                      f'is invalid')
+        except WindowsError as err:
+            raise InvalidKeyStructure(
+                f'The registry from "{self.app}" was not created by winotify'
+                ' or the structure is invalid'
+            ) from err
 
     def _key_exist(self) -> bool:
         try:
@@ -85,4 +81,9 @@ class Registry:
 
 
 def format_name(name: str):
+    """
+    Converts an app ID to lowercase,
+    replacing spaces with dashes.
+    """
+
     return name.lower().replace(' ', '-')
