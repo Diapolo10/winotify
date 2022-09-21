@@ -19,8 +19,7 @@ jobs:
           py37,
           py38,
           py39,
-          py310,
-          pypy3
+          py310
         ]
         include:
           - tox-env: py37
@@ -31,8 +30,6 @@ jobs:
             python-version: '3.9'
           - tox-env: py310
             python-version: '3.10'
-          - tox-env: pypy3
-            python-version: 'pypy-3.8'
     env:
       TOXENV: ${{ matrix.tox-env }}
 

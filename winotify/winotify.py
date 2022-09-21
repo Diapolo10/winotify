@@ -18,7 +18,7 @@ from winotify._communication import Listener, Sender
 from winotify._registry import Registry, format_name
 
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __all__ = ("Notifier", "Notification", "Registry", "Sound")
 
 
