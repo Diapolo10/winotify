@@ -1,9 +1,10 @@
-from os import path
+"""Handles registry stuff"""
+
 import sys
 import winreg
-from os import PathLike
 from pathlib import Path
-from typing import Union
+
+from winotify.config import FilePath
 
 HKEY = winreg.HKEY_CURRENT_USER
 SUBKEY = r"SOFTWARE\Classes\{}"
@@ -12,13 +13,20 @@ SHELLKEY = r"shell\open\command"
 PY_EXE = Path(sys.executable)
 PYW_EXE = PY_EXE.parent / "pythonw.exe"
 
-FilePath = Union[str, PathLike]
 
-class InvalidKeyStructure(Exception): pass
+class InvalidKeyStructure(Exception):
+    """Registry key structure is not valid"""
 
 
 class Registry:
-    def __init__(self, app_id: str, executable: FilePath=PY_EXE, script_path: FilePath = '', *, force_override: bool=False):
+    """Processes registry keys"""
+
+    def __init__(self,
+                 app_id: str,
+                 executable: FilePath = PY_EXE,
+                 script_path: FilePath = '',
+                 *,
+                 force_override: bool = False):
         """
         register app_id to Windows Registry as a protocol,
         eg. the app_id is "My Awesome App" can be called from browser or run.exe by typing "my-awesome-app:[Params]"

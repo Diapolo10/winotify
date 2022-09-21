@@ -1,0 +1,108 @@
+on:
+  push:
+    tags:
+    - 'v*'
+
+name: Compile and release
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          architecture: 'x64'
+
+      - name: Check current version number
+        uses: nowsprinting/check-version-format-action@v3
+        id: version
+        with:
+          prefix: 'v'
+
+      - name: Build headless exe
+        uses: Nuitka/Nuitka-Action@v0.4
+        with:
+          script-name: winotify/winotify.py
+          standalone: true
+          onefile: true
+          assume-yes-for-downloads: true
+          disable-console: true
+          windows-product-name: winotify
+          windows-file-version: ${{ steps.version.outputs.major_without_prefix }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }}.0
+          windows-product-version: ${{ steps.version.outputs.major_without_prefix }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }}.0
+
+      - name: Rename binary
+        shell: pwsh
+        run: |
+          Rename-Item ./build/winotify/winotify.exe winotify-nc.exe
+
+      - name: Build normal exe
+        uses: Nuitka/Nuitka-Action@v0.4
+        with:
+          script-name: winotify/winotify.py
+          standalone: true
+          onefile: true
+          assume-yes-for-downloads: true
+          disable-console: false
+          windows-product-name: winotify
+          windows-file-version: ${{ steps.version.outputs.major_without_prefix }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }}.0
+          windows-product-version: ${{ steps.version.outputs.major_without_prefix }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }}.0
+
+      - name: Upload built binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: exe
+          path: |
+            build/winotify/winotify.exe
+            build/winotify/winotify-nc.exe
+
+  release:
+    name: Release
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: exe
+
+      - name: Check current version number
+        uses: nowsprinting/check-version-format-action@v3
+        id: version
+        with:
+          prefix: 'v'
+
+      - name: Check for pre-release
+        uses: haya14busa/action-cond@v1
+        id: is_prerelease
+        with:
+          cond: ${{ steps.version.outputs.prerelease != '' }}
+          if_true: true
+          if_false: false
+
+      - name: Create release
+        id: new_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: ${{ steps.is_prerelease.outputs.value }}
+
+      - name: Upload 64-bit Windows build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_path: ./${{ env.PROGRAM_NAME }}.exe
+          asset_name: ${{ env.PROGRAM_NAME }}-x86_64-${{ steps.version.outputs.full }}.exe
+          asset_content_type: application/zip
+          upload_url: ${{ steps.new_release.outputs.upload_url }}

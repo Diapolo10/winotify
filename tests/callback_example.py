@@ -47,6 +47,7 @@ def spam():
         t.show()
         time.sleep(1)
 
+
 def main():
     # no need to specify app_id every time
     toast = notifier.create_notification("a notification", 'a notification test with callback',

@@ -1,32 +1,39 @@
-class Sound:
-    def __init__(self, s):
-        self.s = s
+"""Handles audio"""
 
-    def __str__(self):
-        return self.s
+from typing import NamedTuple
+
+ROOT = "ms-winsoundevent:Notification"
 
 
-Default = Sound("ms-winsoundevent:Notification.Default")
-IM = Sound("ms-winsoundevent:Notification.IM")
-Mail = Sound("ms-winsoundevent:Notification.Mail")
-Reminder = Sound("ms-winsoundevent:Notification.Reminder")
-SMS = Sound("ms-winsoundevent:Notification.SMS")
-LoopingAlarm = Sound("ms-winsoundevent:Notification.Looping.Alarm")
-LoopingAlarm2 = Sound("ms-winsoundevent:Notification.Looping.Alarm2")
-LoopingAlarm3 = Sound("ms-winsoundevent:Notification.Looping.Alarm3")
-LoopingAlarm4 = Sound("ms-winsoundevent:Notification.Looping.Alarm4")
-LoopingAlarm6 = Sound("ms-winsoundevent:Notification.Looping.Alarm6")
-LoopingAlarm8 = Sound("ms-winsoundevent:Notification.Looping.Alarm8")
-LoopingAlarm9 = Sound("ms-winsoundevent:Notification.Looping.Alarm9")
-LoopingAlarm10 = Sound("ms-winsoundevent:Notification.Looping.Alarm10")
-LoopingCall = Sound("ms-winsoundevent:Notification.Looping.Call")
-LoopingCall2 = Sound("ms-winsoundevent:Notification.Looping.Call2")
-LoopingCall3 = Sound("ms-winsoundevent:Notification.Looping.Call3")
-LoopingCall4 = Sound("ms-winsoundevent:Notification.Looping.Call4")
-LoopingCall5 = Sound("ms-winsoundevent:Notification.Looping.Call5")
-LoopingCall6 = Sound("ms-winsoundevent:Notification.Looping.Call6")
-LoopingCall7 = Sound("ms-winsoundevent:Notification.Looping.Call7")
-LoopingCall8 = Sound("ms-winsoundevent:Notification.Looping.Call8")
-LoopingCall9 = Sound("ms-winsoundevent:Notification.Looping.Call9")
-LoopingCall10 = Sound("ms-winsoundevent:Notification.Looping.Call10")
-Silent = Sound("silent")
+class _Sound(NamedTuple):
+    """Contains names used by built-in audio samples"""
+
+    Default:        str = '.'.join((ROOT, 'Default'))
+    IM:             str = '.'.join((ROOT, 'IM'))
+    Mail:           str = '.'.join((ROOT, 'Mail'))
+    Reminder:       str = '.'.join((ROOT, 'Reminder'))
+    SMS:            str = '.'.join((ROOT, 'SMS'))
+    LoopingAlarm:   str = '.'.join((ROOT, 'Looping', 'Alarm'))
+    LoopingAlarm2:  str = '.'.join((ROOT, 'Looping', 'Alarm2'))
+    LoopingAlarm3:  str = '.'.join((ROOT, 'Looping', 'Alarm3'))
+    LoopingAlarm4:  str = '.'.join((ROOT, 'Looping', 'Alarm4'))
+    LoopingAlarm5:  str = '.'.join((ROOT, 'Looping', 'Alarm5'))
+    LoopingAlarm6:  str = '.'.join((ROOT, 'Looping', 'Alarm6'))
+    LoopingAlarm7:  str = '.'.join((ROOT, 'Looping', 'Alarm7'))
+    LoopingAlarm8:  str = '.'.join((ROOT, 'Looping', 'Alarm8'))
+    LoopingAlarm9:  str = '.'.join((ROOT, 'Looping', 'Alarm9'))
+    LoopingAlarm10: str = '.'.join((ROOT, 'Looping', 'Alarm10'))
+    LoopingCall:    str = '.'.join((ROOT, 'Looping', 'Call'))
+    LoopingCall2:   str = '.'.join((ROOT, 'Looping', 'Call2'))
+    LoopingCall3:   str = '.'.join((ROOT, 'Looping', 'Call3'))
+    LoopingCall4:   str = '.'.join((ROOT, 'Looping', 'Call4'))
+    LoopingCall5:   str = '.'.join((ROOT, 'Looping', 'Call5'))
+    LoopingCall6:   str = '.'.join((ROOT, 'Looping', 'Call6'))
+    LoopingCall7:   str = '.'.join((ROOT, 'Looping', 'Call7'))
+    LoopingCall8:   str = '.'.join((ROOT, 'Looping', 'Call8'))
+    LoopingCall9:   str = '.'.join((ROOT, 'Looping', 'Call9'))
+    LoopingCall10:  str = '.'.join((ROOT, 'Looping', 'Call10'))
+    Silent:         str = 'silent'
+
+
+Sound = _Sound()
