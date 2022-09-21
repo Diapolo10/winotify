@@ -1,5 +1,5 @@
 [build-system]
-requires = ['poetry-core>=1.0.0',]
+requires = ['poetry-core>=1.0.0']
 build-backend = 'poetry.core.masonry.api'
 
 
@@ -82,6 +82,8 @@ python = '^3.6'
 coverage = {version = '^6.2', extras = ['toml',]}
 flake8 = '^4.0.1'
 mypy = '^0.971'
+nuitka = '^1.0.7'
+ordered-set = '^4.0.2'
 pylint = '^2.12.0'
 pyproject-flake8 = '^0.0.1a5'
 pytest = '^7.0.1'
@@ -105,7 +107,9 @@ winotify-nc = 'winotify.__main__:main'
 max-line-length = 120
 disable = [
     # https://vald-phoenix.github.io/pylint-errors/
+    'R0902',  # Too many instance attributes
     'R0903',  # Too few public methods
+    'R0913',  # Too many arguments
 ]
 
 

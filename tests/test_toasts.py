@@ -1,6 +1,8 @@
 import unittest
-import os
-from winotify import Notification, audio
+from pathlib import Path
+
+from winotify import Notification
+from winotify.audio import Sound
 
 
 class MyTestCase(unittest.TestCase):
@@ -9,25 +11,25 @@ class MyTestCase(unittest.TestCase):
                              title="Winotify Test Toast",
                              msg="New Notification!")
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
     def test_toast_with_icon(self):
         toast = Notification(app_id="winotify test",
                              title="Winotify Test Toast With Icon",
                              msg="New Notification!",
-                             icon=os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.png"))
+                             icon=Path(__file__).parent / "icon.png")
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
     def test_toast_with_sound(self):
         toast = Notification(app_id="winotify test",
                              title="Winotify Test Toast",
                              msg="New Notification!")
-        toast.set_audio(audio.SMS, loop=False)
+        toast.set_audio(Sound.SMS, loop=False)
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
     def test_toast_illegal_char(self):
@@ -35,7 +37,7 @@ class MyTestCase(unittest.TestCase):
                              title="This is illegal >>",
                              msg="< [YEAH] >")
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
     def test_toast_non_english(self):
@@ -43,7 +45,7 @@ class MyTestCase(unittest.TestCase):
                              title="السلام عليكم",
                              msg="Peace be upon you!")
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
     def test_toast_with_action(self):
@@ -52,7 +54,7 @@ class MyTestCase(unittest.TestCase):
                              msg="New Notification with actions!")
         toast.add_actions("go to github", "https://github.com/versa-syahptr/winotify")
 
-        toast.build().show()
+        toast.show()
         print(toast.script)
 
 

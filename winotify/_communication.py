@@ -1,3 +1,5 @@
+"""Handles communication between the notifications and callback targets"""
+
 import atexit
 import multiprocessing
 import threading
@@ -9,10 +11,13 @@ __all__ = ['Listener', 'Sender']
 
 
 class Listener:
+    """Listens for events"""
+
     def __init__(self, key: str):
-        pipe = r'\\.\pipe\{}'.format(key.replace("-", ""))
+        pipe = rf'\\.\pipe\{key.replace("-", "")}'
         print(pipe)
         self.server = MPL(pipe, family='AF_PIPE', authkey=key.encode())
+        # deepcode ignore MissingAPI: No clear alternative
         self.thread = threading.Thread(name=repr(self), target=self._loop, daemon=True)
         self.callbacks: Dict[str, Callable] = {}
         self.queue: "Queue[Callable]" = Queue(1)
@@ -40,6 +45,7 @@ class Listener:
             func()
 
     def start(self):
+        """Starts listening thread"""
         self.thread.start()
         print(f"Thread {self.thread.name}, {self.thread.is_alive()}")
 
@@ -48,6 +54,7 @@ class Listener:
 
 
 class Sender:
+    """Handles outgoing comms"""
     def __init__(self, key: str):
         pipe = rf"\\.\pipe\{key.replace('-', '')}"
         connected = False
@@ -59,6 +66,6 @@ class Sender:
                 continue
 
     def send(self, data):
+        """Sends data to the target pipe"""
         self.con.send(data)
         self.con.close()
-
